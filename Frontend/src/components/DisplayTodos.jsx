@@ -21,7 +21,7 @@ const DisplayTodos = () => {
 
     const handleDelete = async (id) => {
         try {
-            const res = await axios.delete(`/api/todos/${id}/delete`);
+            await axios.delete(`/api/todos/${id}/delete`);
             fetchData();
         } catch (error) {
             console.log(error);
@@ -31,6 +31,17 @@ const DisplayTodos = () => {
     const handleEdit = (todo) => {
         navigate('/', { state: { todo: todo } });
     };
+
+    const categorizeTodos = () => {
+        const todoList = todos.filter(todo => todo.category === 'todo');
+        const pendingList = todos.filter(todo => todo.category === 'pending');
+        const doneList = todos.filter(todo => todo.category === 'done');
+        const maxLength = Math.max(todoList.length, pendingList.length, doneList.length);
+        
+        return { todoList, pendingList, doneList, maxLength };
+    };
+
+    const { todoList, pendingList, doneList, maxLength } = categorizeTodos();
 
     return (
         <div className='p-4'>
@@ -44,32 +55,32 @@ const DisplayTodos = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {todos.map((todo) => (
-                            <tr key={todo._id}>
-                                <td className='border border-black text-center'>
-                                    {todo.category === 'todo' ? (
+                        {[...Array(maxLength)].map((_, index) => (
+                            <tr key={index}>
+                                <td className='w-1/3 border border-black text-center'>
+                                    {todoList[index] ? (
                                         <div className='flex justify-center items-center p-4'>
-                                            {todo.task}
-                                            <button onClick={() => handleEdit(todo)} className='w-16 h-8 bg-green-500 text-black text-center rounded-lg mx-2'>Edit</button>
-                                            <button onClick={() => handleDelete(todo._id)} className='w-16 h-8 bg-red-500 text-black text-center rounded-lg'>Delete</button>
+                                            {todoList[index].task}
+                                            <button onClick={() => handleEdit(todoList[index])} className='w-16 h-8 bg-green-500 text-black text-center rounded-lg mx-2'>Edit</button>
+                                            <button onClick={() => handleDelete(todoList[index]._id)} className='w-16 h-8 bg-red-500 text-black text-center rounded-lg'>Delete</button>
                                         </div>
                                     ) : ''}
                                 </td>
-                                <td className='border border-black text-center'>
-                                    {todo.category === 'pending' ? (
+                                <td className='w-1/3 border border-black text-center'>
+                                    {pendingList[index] ? (
                                         <div className='flex justify-center items-center p-4'>
-                                            {todo.task}
-                                            <button onClick={() => handleEdit(todo)} className='w-16 h-8 bg-green-500 text-black text-center rounded-lg mx-2'>Edit</button>
-                                            <button onClick={() => handleDelete(todo._id)} className='w-16 h-8 bg-red-500 text-black text-center rounded-lg'>Delete</button>
+                                            {pendingList[index].task}
+                                            <button onClick={() => handleEdit(pendingList[index])} className='w-16 h-8 bg-green-500 text-black text-center rounded-lg mx-2'>Edit</button>
+                                            <button onClick={() => handleDelete(pendingList[index]._id)} className='w-16 h-8 bg-red-500 text-black text-center rounded-lg'>Delete</button>
                                         </div>
                                     ) : ''}
                                 </td>
-                                <td className='border border-black text-center'>
-                                    {todo.category === 'done' ? (
+                                <td className='w-1/3 border border-black text-center'>
+                                    {doneList[index] ? (
                                         <div className='flex justify-center items-center p-4'>
-                                            {todo.task}
-                                            <button onClick={() => handleEdit(todo)} className='w-16 h-8 bg-green-500 text-black text-center rounded-lg mx-2'>Edit</button>
-                                            <button onClick={() => handleDelete(todo._id)} className='w-16 h-8 bg-red-500 text-black text-center rounded-lg'>Delete</button>
+                                            {doneList[index].task}
+                                            <button onClick={() => handleEdit(doneList[index])} className='w-16 h-8 bg-green-500 text-black text-center rounded-lg mx-2'>Edit</button>
+                                            <button onClick={() => handleDelete(doneList[index]._id)} className='w-16 h-8 bg-red-500 text-black text-center rounded-lg'>Delete</button>
                                         </div>
                                     ) : ''}
                                 </td>
